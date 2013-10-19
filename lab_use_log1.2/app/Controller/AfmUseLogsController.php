@@ -16,7 +16,13 @@ class AfmUseLogsController extends AppController {
 	 * @var array
 	 */
 	public $components = array('Paginator');
-
+	public $paginate =array(
+			'limit' => 20,
+			'order' => array(
+					'start_date' =>'DESC'
+			)
+	);
+	
 	/**
 	 * index method
 	 *
@@ -61,6 +67,48 @@ class AfmUseLogsController extends AppController {
 		$this->set(compact('users'));
 	}
 
+	//ここから　予定が重複したときエラーを出す機能
+	/*
+	 * if ($this->request->is('post')) {		//postがあったら開始終了時間が条件に合うか調べる
+			
+			$params = array(
+					'conditions' => array(
+							array(
+									"start_date <" => $this->request->data['AfmUseLog']['start_date'],
+									"end_date >" => $this->request->data['AfmUseLog']['end_date'],
+							),
+					),
+			
+			);
+			$duplicate = $this->AfmUseLog->find('count', $params);	//かぶるものがいくつかDBへ参照
+			
+			
+			if ($duplicate >=1) {									//存在　エラーメッセージ
+				$this->Post->set($this->data);
+				$this->Session->setFlash(__('this time had been reserved. Please, try again'));
+			} else if ($duplicate == 0){							//存在しない　今までの処理
+				$this->AfmUseLog->create();
+				if ($this->AfmUseLog->save($this->request->data)) {
+					$this->Session->setFlash(__('The afm use log has been saved.'));
+					return $this->redirect(array('action' => 'index'));
+				} else {
+					$this->Session->setFlash(__('The afm use log could not be saved. Please, try again.'));
+				}
+			} else {
+				$this->Session->setFlash(__('The afm use log could not be saved. Please, try again.'));
+			}
+		}
+		$users = $this->User->find('list');
+		$this->set(compact('users'));
+	}
+
+	 * 
+	 * 
+	 */
+	
+	
+	
+	
 	/**
 	 * edit method
 	 *
