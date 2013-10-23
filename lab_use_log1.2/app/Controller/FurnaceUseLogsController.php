@@ -8,6 +8,7 @@ App::uses('AppController', 'Controller');
  */
 class FurnaceUseLogsController extends AppController {
 
+	
 	public  $uses = array('FurnaceUseLog','User');
 	
 /**
